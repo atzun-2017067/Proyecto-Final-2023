@@ -4,13 +4,13 @@ const Producto = require('../models/producto');
 const getProductos = async (req = request, res = response) => {
 
     //condiciones del get
-    const query = { estado: true };
+    const query = { disponible: true };
 
     const listaProductos = await Promise.all([
         Producto.countDocuments(query),
         Producto.find(query)
             //.populate('usuario', 'nombre')
-            .populate('usuario', 'correo')
+            .populate('usuario', 'nombre')
             .populate('categoria', 'nombre')
     ]);
 

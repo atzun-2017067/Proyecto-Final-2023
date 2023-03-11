@@ -46,7 +46,7 @@ const postCategoria = async (req = request, res = response) => {
 
     // Generar la data a guardar
     const data = {
-        nombre,
+        nombre: req.body.nombre.toUpperCase(),
         categoriaPorDefecto,
         usuario: req.usuario._id
     }
