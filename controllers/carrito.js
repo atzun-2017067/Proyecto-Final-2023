@@ -45,6 +45,12 @@ const postCarrito = async (req = request, res = response) => {
     let precio = query.precio;
     let cantidad = parseInt(cantidadDeProducto);
 
+    if (!query.disponible) { // Si el producto no está disponible, retorna un error.
+      return res.status(400).json({
+        msg: `El producto ${query.nombre} no está disponible.`,
+      });
+    }
+
     totales = precio * cantidad;
 
     totalFinal = totales + totalFinal;

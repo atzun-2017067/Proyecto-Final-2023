@@ -3,11 +3,13 @@ const { ObjectId } = require('mongoose').Types;
 
 const Usuario = require('../models/usuario');
 const Categoria = require('../models/categoria');
+const Producto = require('../models/producto');
 
 const coleccionesPermitidas = [
     'usuarios',
     'categorias',
     'productos',
+    'carrito',
     'roles',
 ];
 
@@ -66,6 +68,33 @@ const buscarCategorias = async( termino = '', res = response) => {
 
 }
 
+const buscarProductos = async( termino = '', res = response) => {
+
+    const esMongoID = ObjectId.isValid( termino );  //TRUE
+
+    if ( esMongoID ) {
+        const producto = await Producto.findById(termino);
+        return res.json({
+            //results: [ usuario ]
+            results: ( producto ) ? [ nombre ] : [] 
+            //Preugntar si el usuario existe, si no existe regresa un array vacio
+        });
+    } 
+
+    //Expresiones regulares, buscar sin impotar mayusculas y minusculas (DIFIERE DE EL)
+    const regex = new RegExp( termino, 'i');
+
+    const productos = await Producto.find({
+        $or: [ { nombre: regex } ],
+        $and: [ { disponible: true } ]
+    });
+
+    res.json({
+        results: productos
+    })
+
+}
+
 
 const buscar = (req = request, res = response) => {
 
@@ -88,7 +117,7 @@ const buscar = (req = request, res = response) => {
            
         break;
         case 'productos':
-            
+            buscarProductos(termino, res);
         break;
         default:
             res.status(500).json({
